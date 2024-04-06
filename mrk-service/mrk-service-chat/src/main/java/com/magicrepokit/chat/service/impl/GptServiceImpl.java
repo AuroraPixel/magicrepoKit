@@ -99,12 +99,14 @@ public class GptServiceImpl implements IGptService {
         //建立模型
         StreamingChatLanguageModel streamingChatLanguageModel = langchainComponent.getStreamingChatLanguageModel(getGptModel(gptRoleVO.getModelName()),new Double(gptRoleVO.getTemperature()));
         List<ChatMessage> chatMessages = new ArrayList<>();
-        chatMessages.add(langchainComponent.getDefalutSystemMessage(getGptModel(gptRoleVO.getModelName())));
-
-        //1.系统提示词
-        SystemMessage systemMessage = new SystemMessage(gptRoleVO.getPrompt());
+        //chatMessages.add(langchainComponent.getDefalutSystemMessage(getGptModel(gptRoleVO.getModelName())));
         //2.知识库内容
         List<TextSegment> relevant = null;
+        SystemMessage systemMessage = null;
+        //1.系统提示词
+        if(ObjectUtil.isNotEmpty(gptRoleVO.getPrompt())){
+            systemMessage = new SystemMessage(gptRoleVO.getPrompt());
+        }
         if(ObjectUtil.isNotEmpty(gptRoleVO.getKnowledgeFileListVO())){
             KnowledgeFileListVO knowledge = gptRoleVO.getKnowledgeFileListVO();
             relevant = getRelevant(knowledge.getIndexName(),gptChatDTO.getContent(),knowledge.getMinScore(),knowledge.getMaxResult());
@@ -115,7 +117,9 @@ public class GptServiceImpl implements IGptService {
                 systemMessage = createSystemMessage(text);
             }
         }
-        chatMessages.add(systemMessage);
+        if(ObjectUtil.isNotEmpty(systemMessage)){
+            chatMessages.add(systemMessage);
+        }
 
 
         //3.历史记忆
