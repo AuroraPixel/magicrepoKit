@@ -493,10 +493,10 @@ public class GptServiceImpl implements IGptService {
      * @return 概览
      */
     private String getOverview(String gptContext) {
-        if (gptContext.length() >= 10) {
-            return gptContext.substring(0, 10);
+        if (gptContext.length() >= 30) {
+            return gptContext.substring(0, 30);
         } else {
-            return gptContext + "..........".substring(0, 10 - gptContext.length());
+            return gptContext + "...".substring(0, 30 - gptContext.length());
         }
     }
 
